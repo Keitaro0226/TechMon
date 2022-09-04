@@ -50,7 +50,7 @@ class BattleViewController: UIViewController {
         
         player = techMonManager.player
         enemy = techMonManager.enemy
-        
+        updateUI()
         gameTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updateGame), userInfo: nil, repeats: true)
         
         gameTimer.fire()
@@ -64,22 +64,22 @@ class BattleViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        techMonManager.stopBGM()
+       techMonManager.stopBGM()
     }
     
     @objc func updateGame() {
-        player.currentMP += 1
-        if player.currentMP >= 20 {
+        playerMP += 1
+        if playerMP >= 20 {
             isPlayerAttackAvailable = true
-            player.currentMP = 20
+            playerMP = 20
         }else{
             isPlayerAttackAvailable = false
         }
         
-        enemy.currentMP += 1
-        if enemy.currentMP >= 35 {
+        enemyMP += 1
+        if enemyMP >= 35 {
             enemyAttack()
-            enemy.currentMP = 0
+            enemyMP = 0
         }
         
        updateUI()
@@ -90,10 +90,10 @@ class BattleViewController: UIViewController {
         techMonManager.damageAnimation(imageView: playerImageView)
         techMonManager.playSE(fileName: "SE_attack")
         
-        player.currentHP -= 20
-        playerHPLabel.text = "\(player.currentHP) / 100"
+        playerHP -= 20
+       playerHPLabel.text = "\(playerHP) / 100"
         
-        if player.currentHP <= 0 {
+        if playerHP <= 0 {
             finishBattle(vanishImageView: playerImageView, isPlayerWin: false)
         }
     }
@@ -101,7 +101,7 @@ class BattleViewController: UIViewController {
     func finishBattle(vanishImageView: UIImageView, isPlayerWin: Bool) {
         
         techMonManager.vanishAnimation(imageView: vanishImageView)
-        techMonManager.stopBGM()
+       techMonManager.stopBGM()
         gameTimer.invalidate()
         isPlayerAttackAvailable = false
         
@@ -128,13 +128,15 @@ class BattleViewController: UIViewController {
             techMonManager.damageAnimation(imageView: enemyImageView)
             techMonManager.playSE(fileName: "SE_attack")
             
-            player.currentHP -= player.attackPoint
+            enemy.currentHP -= player.attackPoint
             
             player.currentTP += 10
-            if player.currentTP >= player.maxTP {
+            if player.currentTP >= player.maxTP{
                 player.currentTP = player.maxTP
             }
             player.currentMP = 0
+            
+            
             judgeBattle()
         }
     }
@@ -170,7 +172,7 @@ class BattleViewController: UIViewController {
     @IBAction func fireAction() {
         if isPlayerAttackAvailable && player.currentTP >= 40 {
             techMonManager.damageAnimation(imageView: enemyImageView)
-            techMonManager.playSE(fileName: "SE_fire")
+           techMonManager.playSE(fileName: "SE_fire")
             
             enemy.currentHP -= 100
             
